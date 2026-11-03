@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planberry</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#e63e79" />
+  <link rel="icon" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Sets light/dark mode before the page shows, so it doesn't flash -->
+  <script>
+    try {
+      var theme = localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-bs-theme", theme);
+    } catch (e) {}
+  </script>
+  <!-- Accounts: send logged-out visitors to the landing page -->
+  <script src="auth.js"></script>
+  <script>
+    if (!Planberry.currentUser()) window.location.replace("landing.html");
+  </script>
+</head>
+<body>
+  <div class="d-flex justify-content-end align-items-center gap-2 small">
+    <span>Hi, <strong id="User-name"></strong></span>
+    <a href="account.html" class="btn btn-sm btn-outline-secondary">⚙️ Settings</a>
+    <button id="Logout-btn" type="button" class="btn btn-sm btn-outline-primary">Log out</button>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center">
+    <h1>Planberry</h1>
+    <div class="d-flex gap-2">
+      <button id="Sound-toggle" type="button" class="btn btn-outline-secondary btn-sm">🔊</button>
+      <button id="Theme-toggle" type="button" class="btn btn-outline-secondary btn-sm" aria-label="Switch between light and dark mode">🌙</button>
+    </div>
+  </div>
+
+  <form id="Task-form">
+    <div class="input-group mb-3">
+      <input type="text" id="Task-input" class="form-control" placeholder="What needs to be done?" />
+      <button type="button" id="Voice-btn" class="btn btn-outline-secondary d-none" aria-label="Say your task" title="Say your task">🎤</button>
+    </div>
+    <textarea id="Task-description" class="form-control mb-3" placeholder="Description (optional)"></textarea>
+
+    <div class="row g-2 mb-2">
+      <div class="col-7">
+        <label for="Task-due" class="form-label small mb-1">When do you want to achieve this?</label>
+        <input type="date" id="Task-due" class="form-control" />
+      </div>
+      <div class="col-5">
+        <label for="Task-time" class="form-label small mb-1">Time (optional)</label>
+        <input type="time" id="Task-time" class="form-control" />
+      </div>
+    </div>
+
+    <div class="row g-2 mb-3">
+      <div class="col-6">
+        <label for="Task-category" class="form-label small mb-1">Category</label>
+        <select id="Task-category" class="form-select"></select>
+      </div>
+      <div class="col-6">
+        <label for="Task-priority" class="form-label small mb-1">Priority</label>
+        <select id="Task-priority" class="form-select">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add</button>
+    <button type="button" id="Cancel-edit" class="btn btn-outline-secondary ms-2 d-none">Cancel</button>
+  </form>
+
+  <!-- Manage categories -->
+  <button type="button" id="Manage-categories-btn" class="btn btn-sm btn-outline-secondary mt-3">🏷️ Manage categories</button>
+
+  <div id="Category-manager" class="card mt-2 d-none">
+    <div class="card-body">
+      <h6 class="card-title mb-2">Your categories</h6>
+      <p class="small text-body-secondary mb-2">Tap a colour to change it.</p>
+      <ul id="Category-list" class="list-unstyled mb-3"></ul>
+      <form id="New-category-form" class="d-flex gap-2 align-items-center">
+        <input type="color" id="New-category-color" class="form-control form-control-color" value="#e63e79" title="Pick a colour" aria-label="Colour for the new category" />
+        <input type="text" id="New-category-name" class="form-control" placeholder="New category, e.g. Church" maxlength="20" aria-label="New category name" />
+        <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+      <div id="Category-error" class="small text-danger mt-2"></div>
+    </div>
+  </div>
+
+  <p id="Task-count" class="mt-4 mb-0 fw-semibold"></p>
+
+  <div id="Progress" class="progress mt-2" role="progressbar" aria-label="Tasks done" aria-valuemin="0" aria-valuemax="100">
+    <div id="Progress-bar" class="progress-bar" style="width: 0%"></div>
+  </div>
+
+  <p id="Streak" class="small mt-2 mb-0"></p>
+
+  <div id="Reminder-box" class="small mt-1 d-flex align-items-center flex-wrap gap-2">
+    <button type="button" id="Reminder-btn" class="btn btn-sm btn-outline-primary d-none">🔔 Turn on reminders</button>
+    <span id="Reminder-note"></span>
+  </div>
+
+  <input type="search" id="Search-input" class="form-control mt-3" placeholder="Search your tasks..." aria-label="Search tasks" />
+
+  <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+    <div class="btn-group" id="Filter-buttons">
+      <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+      <button type="button" class="btn btn-outline-primary" data-filter="pending">Pending</button>
+      <button type="button" class="btn btn-outline-primary" data-filter="completed">Completed</button>
+    </div>
+
+    <select id="Category-filter" class="form-select w-auto" aria-label="Filter by category"></select>
+
+    <select id="Sort-select" class="form-select w-auto" aria-label="Sort tasks">
+      <option value="newest">Newest first</option>
+      <option value="oldest">Oldest first</option>
+      <option value="az">A to Z</option>
+      <option value="za">Z to A</option>
+      <option value="due">Due date</option>
+      <option value="priority">Priority</option>
+    </select>
+  </div>
+
+  <ul id="Task-list" class="list-group mt-3"></ul>
+  <p id="Empty-note" class="text-center mt-3 d-none">No tasks match your search or filters.</p>
+
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <button id="Clear-completed" type="button" class="btn btn-sm btn-outline-danger">Clear completed</button>
+    <button id="Backup-btn" type="button" class="btn btn-sm btn-outline-primary">Save backup</button>
+    <button id="Restore-btn" type="button" class="btn btn-sm btn-outline-primary">Restore backup</button>
+    <input type="file" id="Restore-input" accept=".json,application/json" class="d-none" />
+  </div>
+
+  <!-- "Task deleted · Undo" message -->
+  <div id="Undo-bar" class="undo-bar d-none" role="status">
+    <span id="Undo-text"></span>
+    <button id="Undo-btn" type="button" class="btn btn-sm btn-light">Undo</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

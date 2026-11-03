@@ -1,0 +1,153 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #fff4f8;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  color: #c2185b;
+  font-weight: 700;
+}
+
+input, textarea, button, select {
+  font-family: inherit;
+}
+
+/* ---------- Dark mode ---------- */
+[data-bs-theme="dark"] body {
+  background-color: #1c1319;
+}
+
+[data-bs-theme="dark"] h1 {
+  color: #ff7aa8;
+}
+
+/* ---------- Pink version of Bootstrap's blue buttons ---------- */
+.btn-primary {
+  --bs-btn-bg: #e63e79;
+  --bs-btn-border-color: #e63e79;
+  --bs-btn-hover-bg: #cc3469;
+  --bs-btn-hover-border-color: #cc3469;
+  --bs-btn-active-bg: #b32c5b;
+  --bs-btn-active-border-color: #b32c5b;
+  --bs-btn-disabled-bg: #e63e79;
+  --bs-btn-disabled-border-color: #e63e79;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: #e63e79;
+  --bs-btn-border-color: #e63e79;
+  --bs-btn-hover-bg: #e63e79;
+  --bs-btn-hover-border-color: #e63e79;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #e63e79;
+  --bs-btn-active-border-color: #e63e79;
+  --bs-btn-active-color: #fff;
+}
+
+.form-check-input:checked {
+  background-color: #e63e79;
+  border-color: #e63e79;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #e63e79;
+  box-shadow: 0 0 0 0.25rem rgba(230, 62, 121, 0.25);
+}
+
+/* ---------- Due dates ---------- */
+.due-today {
+  color: #c2410c;
+  font-weight: 600;
+}
+
+/* ---------- Progress bar ---------- */
+.progress {
+  height: 12px;
+}
+
+.progress-bar {
+  background-color: #e63e79;
+  transition: width 0.4s ease;
+}
+
+.progress-bar.all-done {
+  background-color: #2e9e5b;
+}
+
+/* ---------- Streak ---------- */
+#Streak {
+  font-weight: 600;
+}
+
+/* ---------- Manage categories ---------- */
+.category-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--bs-border-color, #ddd);
+}
+
+.category-row:last-child {
+  border-bottom: none;
+}
+
+.category-row input[type="color"],
+#New-category-color {
+  width: 40px;
+  height: 34px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+/* ---------- Voice input ---------- */
+#Voice-btn.listening {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* ---------- Undo message ---------- */
+.undo-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  background: #333;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 1050;
+}
+
+.undo-bar.d-none {
+  display: none;
+}
+
+/* ---------- Landing, sign-up and login pages ---------- */
+body.wide {
+  max-width: 1000px;
+}
+
+.brand-pink {
+  color: #c2185b;
+}
+
+[data-bs-theme="dark"] .brand-pink {
+  color: #ff7aa8;
+}
+
+.auth-card {
+  max-width: 420px;
+}
